@@ -1,9 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { GET_COVID_SUMMARY } from "./constants";
+import axios from "axios";
 
 function App() {
+  const simpleFetch = () => {
+    axios.get(GET_COVID_SUMMARY).then((response) => {
+      const countries = response && response.data && response.data.Countries;
+      const UkraineCovidData =
+        countries &&
+        countries.find((item) => item.Country.startsWith("Ukraine"));
+      console.log(UkraineCovidData);
+    });
+  };
   return (
-    <div className="App">
+    <div onClick={() => simpleFetch()} className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
