@@ -1,36 +1,28 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { GET_COVID_SUMMARY } from "./constants";
-import axios from "axios";
-
-function App() {
-  const simpleFetch = () => {
-    axios.get(GET_COVID_SUMMARY).then((response) => {
-      const countries = response && response.data && response.data.Countries;
-      const UkraineCovidData =
-        countries &&
-        countries.find((item) => item.Country.startsWith("Ukraine"));
-      console.log(UkraineCovidData);
-    });
+import React, { useLayoutEffect, useState } from "react";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import getThemeObject from "./theme";
+import { connect } from "react-redux";
+import { selectIsDarkModeOn } from "./redux/selectors";
+import NavBar from "./components/NavBar";
+function mapStateToProps(state) {
+  return {
+    isDarkModeOn: selectIsDarkModeOn(state),
   };
+}
+
+function AppBase({ isDarkModeOn }) {
+  const [theme, setTheme] = useState();
+  useLayoutEffect(() => {
+    setTheme(createMuiTheme(getThemeObject(isDarkModeOn)));
+  }, [isDarkModeOn]);
+
   return (
-    <div onClick={() => simpleFetch()} className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <NavBar />
+      <CssBaseline />
+    </ThemeProvider>
   );
 }
 
-export default App;
+export default connect(mapStateToProps)(AppBase);
